@@ -12,11 +12,12 @@ enum AttriboostConstants
     ATTR_SPELL = 18282,
     ATTR_QUEST = 441153,
 
-    ATTR_SETTING_PROMPT = 1
-};
+    ATTR_SETTING_PROMPT = 1,
 
-enum AttriboostStats
-{
+    ATTR_NPC_TEXT_HAS_ATTRIBUTES = 441191,
+    ATTR_NPC_TEXT_GENERIC = 441190,
+    ATTR_NPC_TEXT_DISABLED = 441192,
+
     ATTR_SPELL_STAMINA = 7477,
     ATTR_SPELL_AGILITY = 7471,
     ATTR_SPELL_INTELLECT = 7468,
@@ -55,6 +56,7 @@ bool IsAttributeAtMax(uint32 /*attribute*/);
 uint32 GetAttributesToSpend(Player* /*player*/);
 uint32 GetTotalAttributes(Player* /*player*/);
 uint32 GetTotalAttributes(Attriboosts* /*attributes*/);
+uint32 GetResetCost();
 bool HasSetting(Player* player, uint32 /*setting*/);
 void ToggleSetting(Player* player, uint32 /*setting*/);
 

@@ -259,7 +259,6 @@ Attriboosts* LoadAttriboostsForPlayer(Player* player)
 
     if (!qResult)
     {
-        LOG_ERROR("module", "Failed to load from 'attriboost_attributes' table.");
         return nullptr;
     }
 
@@ -606,6 +605,11 @@ uint32 GetTotalAttributes(Player* player)
     return GetTotalAttributes(attributes);
 }
 
+uint32 GetResetCost()
+{
+    return sConfigMgr->GetOption<uint32>("Attriboost.ResetCost", 2500000);
+}
+
 bool HasSetting(Player* player, uint32 setting)
 {
     if (!player)
@@ -661,7 +665,7 @@ bool AttriboostCreatureScript::OnGossipHello(Player* player, Creature* creature)
 
     if (!sConfigMgr->GetOption<bool>("Attriboost.Enable", false))
     {
-        SendGossipMenuFor(player, 441192, creature);
+        SendGossipMenuFor(player, ATTR_NPC_TEXT_DISABLED, creature);
 
         return true;
     }
@@ -724,7 +728,7 @@ bool AttriboostCreatureScript::OnGossipHello(Player* player, Creature* creature)
 
     if (HasAttributes(player))
     {
-        uint32 resetCost = sConfigMgr->GetOption<uint32>("Attriboost.ResetCost", 2500000);
+        uint32 resetCost = GetResetCost();
         AddGossipItemFor(player, GOSSIP_ICON_DOT, "|TInterface\\GossipFrame\\UnlearnGossipIcon:16|t Reset Attributes", GOSSIP_SENDER_MAIN, 1000, "Are you sure you want to reset your attributes?", resetCost, false);
     }
 
@@ -732,11 +736,11 @@ bool AttriboostCreatureScript::OnGossipHello(Player* player, Creature* creature)
 
     if (HasAttributesToSpend(player))
     {
-        SendGossipMenuFor(player, 441191, creature);
+        SendGossipMenuFor(player, ATTR_NPC_TEXT_HAS_ATTRIBUTES, creature);
     }
     else
     {
-        SendGossipMenuFor(player, 441190, creature);
+        SendGossipMenuFor(player, ATTR_NPC_TEXT_GENERIC, creature);
     }
 
     return true;
@@ -749,12 +753,6 @@ bool AttriboostCreatureScript::OnGossipSelect(Player* player, Creature* creature
         OnGossipHello(player, creature);
     }
 
-    if (action > 5000)
-    {
-        HandleAttributeAllocation(player, action, false);
-        OnGossipHello(player, creature);
-    }
-
     if (action == 1000)
     {
         HandleAttributeAllocation(player, action, true);
@@ -764,6 +762,12 @@ bool AttriboostCreatureScript::OnGossipSelect(Player* player, Creature* creature
     if (action >= 2000 && action < 3000)
     {
         HandleSettings(player, creature, action);
+    }
+
+    if (action > 5000)
+    {
+        HandleAttributeAllocation(player, action, false);
+        OnGossipHello(player, creature);
     }
 
     return true;
@@ -809,7 +813,7 @@ void AttriboostCreatureScript::HandleAttributeAllocation(Player* player, uint32 
 
     if (reset)
     {
-        auto cost = sConfigMgr->GetOption<uint32>("Attriboost.ResetCost", 2500000);
+        auto cost = GetResetCost();
         if (player->HasEnoughMoney(cost))
         {
             player->SetMoney(player->GetMoney() - cost);
