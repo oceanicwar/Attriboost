@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS `attriboost_attributes` (
   `agility` int unsigned DEFAULT NULL,
   `intellect` int unsigned DEFAULT NULL,
   `spirit` int unsigned DEFAULT NULL,
+  `spellpower` int unsigned DEFAULT NULL,
   `settings` int DEFAULT NULL,
   `comment` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`guid`)
